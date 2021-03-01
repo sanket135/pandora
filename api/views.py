@@ -121,6 +121,7 @@ def persons(request, persononename, persontwoname):
     personsdict["personone"].pop("friends")
     personsdict["persontwo"].pop("friends")
     personsdict.update({"friends": friends})
+    #print(personsdict)
     data = json.dumps(personsdict, indent = 4)
     return HttpResponse(data)
 
@@ -180,12 +181,16 @@ def foodfor(request, personname):
         data = json.dumps(details, indent = 4)
     return HttpResponse(data)
 
-def uploadpeople(request):
-    #Flushing previous data
-    call_command('flush', verbosity=3, interactive=False)
-    # uploading companies data first
-    uploadcompanies()
-    file = os.getcwd() + '/api/data/people.json'
+def uploadpeople(request, env):
+    if env == 'test':
+        uploadcompanies()
+        file = os.getcwd() + '/api/data/test/peopletest.json'
+    else:
+        #Flushing previous data
+        call_command('flush', verbosity=3, interactive=False)
+        # uploading companies data first
+        uploadcompanies()
+        file = os.getcwd() + '/api/data/people.json'
     print(file)
     password = make_password("pandora")
     peoplecount = 0
@@ -206,7 +211,7 @@ def uploadpeople(request):
             relatedcompanys = Company.objects.filter(index=companyid)
             for relatedcompany in relatedcompanys:
                 for detail in user:
-                    print(detail.company)
+                    #print(detail.company)
                     detail.company.add(relatedcompany)
             print("Added related Company")
             # Adding Related Tags
@@ -220,11 +225,11 @@ def uploadpeople(request):
                 tagslist.append(tag)
             print("Adding tags to relevant users..")
             relatedusertags = Tag.objects.filter(tag__in=tagslist)
-            print(user)
-            print(relatedusertags)
+            #print(user)
+            #print(relatedusertags)
             for relatedusertag in relatedusertags:
                 for detail in user:
-                    print(detail.tags)
+                    #print(detail.tags)
                     detail.tags.add(relatedusertag)
             print("Related Tags added..")
             # Adding related Food
@@ -255,25 +260,25 @@ def uploadpeople(request):
             relatedfavouritefoods = favouriteFood.objects.filter(name__in=favouritefoodslist)
             relatedfruits = Fruit.objects.filter(name__in=fruitlist)
             relatevegetables = Vegetable.objects.filter(name__in=vegetablelist)
-            print(user)
-            print(relatedfavouritefoods)
-            print(relatedfruits)
-            print(relatevegetables)
+            #print(user)
+            #print(relatedfavouritefoods)
+            #print(relatedfruits)
+            #print(relatevegetables)
             for relatedfavouritefood in relatedfavouritefoods:
                 for detail in user:
-                    print(detail.favouriteFood)
+                    #print(detail.favouriteFood)
                     detail.favouriteFood.add(relatedfavouritefood)
             # Adding related Fruits
             if relatedfruits.exists():
                 for relatedfruit in relatedfruits:
                     for detail in user:
-                        print(detail.fruit)
+                        #print(detail.fruit)
                         detail.fruit.add(relatedfruit)
             # Adding related Vegetables
             if relatevegetables.exists():
                 for relatedvegetable in relatevegetables:
                     for detail in user:
-                        print(detail.vegetables)
+                        #print(detail.vegetables)
                         detail.vegetables.add(relatedvegetable)
             print("Related Favourite Foods added..")
             i += 1
@@ -282,7 +287,7 @@ def uploadpeople(request):
         if i == peoplecount:
             fi.close()
             # Once all users are created then and only then Relations are added since they have many to many relation with user self
-            uploadrelateddate()
+            uploadrelateddate(env)
 
     del(data)
     del(item)
@@ -302,7 +307,7 @@ def uploadcompanies():
         print("Company count is ...")
         print(companycount)
         for item in data:
-            print(item["index"])
+            #print(item["index"])
             Company.objects.create(index=item["index"], company=item["company"])
 
     del (data)
@@ -311,8 +316,11 @@ def uploadcompanies():
     gc.collect()
     return HttpResponse('Company Data is uploading...')
 
-def uploadrelateddate():
-    input = os.getcwd() + '/api/data/people.json'
+def uploadrelateddate(env):
+    if env == 'test':
+        input = os.getcwd() + '/api/data/test/peopletest.json'
+    else:
+        input = os.getcwd() + '/api/data/people.json'
     print(input)
     print("Adding related Friends Data....")
     with open(input) as fi:
@@ -328,6 +336,7 @@ def uploadrelateddate():
                 for detail in u:
                     detail.friends.add(relatedfriend)
             del (friendlist)
+            del(relatedfriends)
             del (friends)
             del (friendid)
             gc.collect()

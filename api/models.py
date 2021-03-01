@@ -1,7 +1,7 @@
 import datetime
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from django.contrib.auth import get_user_model
 
 class Tag(models.Model):
     tag = models.CharField(max_length=30, blank=True, unique=True)
@@ -50,7 +50,7 @@ class User(AbstractUser):
     tags = models.ManyToManyField(Tag, blank=True)
     vegetables = models.ManyToManyField(Vegetable, blank=True)
     fruit = models.ManyToManyField(Fruit, blank=True)
-    company = models.ManyToManyField(Company, blank=True, null=True, related_name="employees")
+    company = models.ManyToManyField(Company, blank=True, related_name="employees")
     favouriteFood = models.ManyToManyField(favouriteFood, blank=True)
 
 

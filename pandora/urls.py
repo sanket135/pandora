@@ -30,6 +30,6 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('persons/<str:persononename>/<str:persontwoname>/', views.persons, name='persons'),
     path('foodfor/<str:personname>/', views.foodfor, name='foodfor'),
-    path('uploadpeople/', views.uploadpeople, name='uploadusers'),
+    path('uploadpeople/<str:env>', views.uploadpeople, name='uploadusers'),
     path('companyemployees/<str:companyname>/', views.companyemployees, name='companyemployees'),
 ]
