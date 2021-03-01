@@ -10,7 +10,7 @@ class PandoraTestCase(TestCase):
     def setUp(self):
         pass
 
-    """
+
     def test_classifier(self):
         print("Starting Fruits and Vegetables Classifier Test...")
 
@@ -37,7 +37,7 @@ class PandoraTestCase(TestCase):
         count = users.count()
         self.assertEqual(count, 3)
         print("Upload People Test Completed")
-    """
+
 
     def test_persons(self):
         print("Starting Two People given Data Test...")
